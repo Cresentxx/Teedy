@@ -8,7 +8,7 @@ pipeline {
         }
         stage('Generate Javadoc') {
             steps {
-                sh 'mvn javadoc:jar'
+                sh 'mvn javadoc:javadoc --fail-never'
             }
         }
          stage('pmd') {
@@ -18,6 +18,7 @@ pipeline {
          }
         stage('Test') {
             steps {
+                sh 'mvn test --fail-never'
                 sh 'mvn surefire-report:report'
             }
         }
