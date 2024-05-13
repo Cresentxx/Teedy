@@ -6,19 +6,28 @@ pipeline {
                 sh 'mvn -B -DskipTests clean package'
             }
         }
-        stage('Test') {
-            steps {
-                sh 'mvn surefire-report:report'
-            }
-        }
         stage('Generate Javadoc') {
             steps {
                 sh 'mvn javadoc:jar'
             }
         }
+         stage('pmd') {
+             steps {
+             sh 'mvn pmd:pmd'
+             }
+         }
+        stage('Test') {
+            steps {
+                sh 'mvn surefire-report:report'
+            }
+        }
+        
     }
     post {
         always {
+            archiveArtifacts artifacts: '**/target/site/**', fingerprint: true
+             archiveArtifacts artifacts: '**/target/**/*.jar', fingerprint: true
+             archiveArtifacts artifacts: '**/target/**/*.war', fingerprint: true
             archiveArtifacts artifacts: 'target/surefire-reports/*', fingerprint: true
             archiveArtifacts artifacts: 'target/javadoc.jar', fingerprint: true
         }
